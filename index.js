@@ -144,7 +144,6 @@ function updateInput(value) {
 function solveEquation() {
     try {
         const result = eval(equation);
-        console.log(result);
         equation = result.toFixed(2).toString();
         input.textContent = equation;
         adjustFontSize();

@@ -54,6 +54,7 @@ body {
 .operator,
 .equal
 {
+    text-align: center;
     border-radius: 10px;
     border: none;
     font-weight: bold;
@@ -114,8 +115,8 @@ body {
     .normal,
     .operator
     {
-        height: 50px;
-        width: 50px;
+        height: 55px;
+        width: 55px;
     }
 
     .equal {
