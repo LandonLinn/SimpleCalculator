@@ -159,3 +159,17 @@ svg{
     color: white;
 }
 
+
+
+/* Responsiveness */
+@media screen and (max-width: 375px) {
+    body{
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0px;
+    }
+
+    .calc-container{
+        grid-column: 1 / span 3;
+        width: 100%;
+    }
+}
