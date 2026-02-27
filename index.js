@@ -11,6 +11,7 @@ let currentInput = document.getElementById("current");
 // Set variable
 let input = "0";
 let operationCounter = 0;
+let solveCounter = 0;
 let operandFinder = "";
 let expOne = "";
 let expTwo = "";
@@ -43,11 +44,7 @@ numberEight.addEventListener("click", () => numberPress(numberEight.textContent)
 const numerNine = document.getElementById("nine");
 numerNine.addEventListener("click", () => numberPress(numerNine.textContent));
 
-// Hide previous input at start
-previousInput.classList.add("hidden");
-
 // ---- Operations ----
-const operations = ["+", "-", "*", "/"];
 
 const decimal = document.getElementById("decimal");
 decimal.addEventListener("click", () => decimalPress(decimal.textContent));
@@ -65,6 +62,22 @@ divide.addEventListener("click", () => operationPress(divide.id));
 const equal = document.getElementById("equal");
 equal.addEventListener("click", () => solve());
 
+// Disable Buttons
+const disable = document.getElementsByClassName("disable");
+console.log(disable);
+
+function disableButtons(bool){
+    for (let btn of disable){
+        btn.disabled = bool;
+        if(bool === true) {
+            btn.classList.add("isDisabled");
+        } else{
+            btn.classList.remove("isDisabled");
+        }
+    }
+}
+
+
 // -- Manipulators
 
 // Decimal Handling
@@ -80,6 +93,7 @@ function decimalPress(value){
 
 }
 
+// Percent Handling
 function percentPress(value){
     if(input.slice(-1) === "%" || input === "0"){
         return;
@@ -93,10 +107,10 @@ function percentPress(value){
 
 // -- Operations
 
-function operationPress(operand, value){
+function operationPress(operand){
 
     if(operationCounter != 0){
-        alert("Only one operation: Clear or solve to start over.")
+        alert("Only one operation.")
     } else{
         // Operation counter + 1
         operationCounter += 1;
@@ -107,9 +121,7 @@ function operationPress(operand, value){
 
         } else {
             expOne = Number(input.slice(0));
-        }   
-        console.log(typeof expOne, expOne)
-
+        }  
         // Add
         if (operand === "add") {
             input += "+";
@@ -138,41 +150,6 @@ function operationPress(operand, value){
     currentInput.textContent = input;
 }
 
-// Check for percent
-function percentCheck(index){
-     // Slice & put input into previous textContent and set input and expressions back to 0
-    if(input.includes("%")){
-        expTwo = Number(input.slice(index + 1, -1) / 100);
-    } else{
-        expTwo = Number(input.slice(index + 1, -1));
-    }
-
-    return expTwo;
-}
-
-// Solve
-function solve(){
-    let solution = null;
-    let operandIndex = null;
-
-   if(operandFinder === "add"){
-        operandIndex = input.indexOf("+")
-        solution = expOne + percentCheck(operandIndex);
-   }
-
-   // If solved with a percent and no operand
-   else{
-     solution = Number(input.slice(0,-1)) / 100;
-   }
-
-
-    previousInput.textContent = input;
-    previousInput.classList.remove("hidden");
-    // Set currentInput to solution
-    currentInput.textContent = solution;
-    return;
-}
-
 // ---- Numbers ----
 
 // Number Handling
@@ -195,7 +172,6 @@ function numberPress(value){
     currentInput.textContent = input;
 }
 
-
 // ----- Controls -----
 
 // Delete Button - Substring until last digit in input string
@@ -203,9 +179,10 @@ function deletePress(){
     if (input.length > 0) {
 
         if (input.length === 1) {
-            input = 0
+            input = "0";
+            clearButton.textContent = "AC";
         } else{
-            input = input.slice(0, -1)
+            input = input.slice(0, -1);
         }  
     }
 
@@ -214,20 +191,75 @@ function deletePress(){
 }
 
 function clearPress(){
+    disableButtons(false);
     // Reset to AC
     clearButton.textContent = "AC";
     // Set input back to 0
     input = "0";
+    expOne = 0;
+    expTwo= 0;
     // Update Number
     currentInput.textContent = input;
 
     // Clear and hide previous
     previousInput.textContent = "";
-    previousInput.classList.add("hidden");
 
     // Set operationCounter back to 0
     operationCounter = 0;
 }
+
+// Check for percent
+function percentCheck(index){
+    if(disableButtons === true) return;
+     // Slice & put input into previous textContent and set input and expressions back to 0
+    if(input.includes("%")){
+        expTwo = Number(input.slice(index + 1, -1) / 100);
+    } else{
+        expTwo = Number(input.slice(index + 1));
+    }
+
+    return expTwo;
+}
+
+// Solve
+function solve(){
+    let solution = null;
+    let operandIndex = null;
+    if(expTwo === "") return;
+
+   if(operandFinder === "add"){
+        operandIndex = input.indexOf("+")
+        solution = expOne + percentCheck(operandIndex);
+        disableButtons(true);
+   }
+   else if(operandFinder === "subtract"){
+        operandIndex = input.indexOf("-")
+        solution = expOne - percentCheck(operandIndex);
+        disableButtons(true);
+   }
+   else if(operandFinder === "multiply"){
+        operandIndex = input.indexOf("*")
+        solution = expOne * percentCheck(operandIndex);
+        disableButtons(true);
+   }
+   else if(operandFinder === "divide"){
+        operandIndex = input.indexOf("/")
+        solution = expOne / percentCheck(operandIndex);
+        disableButtons(true);
+   }
+   // If solved with a percent and no operand
+   else if (input.includes("%")){
+     solution = Number(input.slice(0,-1)) / 100;
+     disableButtons(true);
+   } else{
+     return;
+   }
+
+    previousInput.textContent = input;
+    // Set currentInput to solution
+    currentInput.textContent = solution;
+}
+
 
 
 
