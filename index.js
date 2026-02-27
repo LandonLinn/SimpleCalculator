@@ -64,7 +64,6 @@ equal.addEventListener("click", () => solve());
 
 // Disable Buttons
 const disable = document.getElementsByClassName("disable");
-console.log(disable);
 
 function disableButtons(bool){
     for (let btn of disable){
@@ -76,7 +75,6 @@ function disableButtons(bool){
         }
     }
 }
-
 
 // -- Manipulators
 
@@ -190,6 +188,19 @@ function deletePress(){
     currentInput.textContent = input;
 }
 
+// Check for percent
+function percentCheck(index){
+    if(disableButtons === true) return;
+     // Slice & put input into previous textContent and set input and expressions back to 0
+    if(input.includes("%")){
+        expTwo = Number(input.slice(index + 1, -1) / 100);
+    } else{
+        expTwo = Number(input.slice(index + 1));
+    }
+
+    return expTwo;
+}
+
 function clearPress(){
     disableButtons(false);
     // Reset to AC
@@ -208,53 +219,37 @@ function clearPress(){
     operationCounter = 0;
 }
 
-// Check for percent
-function percentCheck(index){
-    if(disableButtons === true) return;
-     // Slice & put input into previous textContent and set input and expressions back to 0
-    if(input.includes("%")){
-        expTwo = Number(input.slice(index + 1, -1) / 100);
-    } else{
-        expTwo = Number(input.slice(index + 1));
-    }
-
-    return expTwo;
-}
-
 // Solve
 function solve(){
     let solution = null;
     let operandIndex = null;
-    if(expTwo === "") return;
+
+    
 
    if(operandFinder === "add"){
         operandIndex = input.indexOf("+")
-        solution = expOne + percentCheck(operandIndex);
-        disableButtons(true);
+        solution = Number(expOne + percentCheck(operandIndex));
    }
    else if(operandFinder === "subtract"){
         operandIndex = input.indexOf("-")
-        solution = expOne - percentCheck(operandIndex);
-        disableButtons(true);
+        solution = Number(expOne - percentCheck(operandIndex));
    }
    else if(operandFinder === "multiply"){
         operandIndex = input.indexOf("*")
-        solution = expOne * percentCheck(operandIndex);
-        disableButtons(true);
+        solution = Number(expOne * percentCheck(operandIndex));
    }
    else if(operandFinder === "divide"){
         operandIndex = input.indexOf("/")
-        solution = expOne / percentCheck(operandIndex);
-        disableButtons(true);
+        solution = Number(expOne / percentCheck(operandIndex));
    }
    // If solved with a percent and no operand
    else if (input.includes("%")){
-     solution = Number(input.slice(0,-1)) / 100;
-     disableButtons(true);
+     solution = Number((input.slice(0,-1)) / 100);
    } else{
      return;
    }
 
+   disableButtons(true);
     previousInput.textContent = input;
     // Set currentInput to solution
     currentInput.textContent = solution;
